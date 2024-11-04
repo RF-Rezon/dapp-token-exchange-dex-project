@@ -14,20 +14,20 @@ contract Token {
         balanceOf[msg.sender] = totalSupply;
     }
 
-    function transfer (address _to, uint256 _number_of_token) public returns (bool success){  // 🔴 _value
+    function transfer (address _to, uint256 _ammouts_of_tokens) public returns (bool success){  // 🔴 _value
 
-    // balanceOf[msg.sender] = balanceOf[msg.sender].sub(_number_of_token);
-    // balanceOf[_to] = balanceOf[_to].add(_number_of_token);
+    // balanceOf[msg.sender] = balanceOf[msg.sender].sub(_ammouts_of_tokens);
+    // balanceOf[_to] = balanceOf[_to].add(_ammouts_of_tokens);
 
     // Better way is here: 
 
-    require(balanceOf[msg.sender] >= _number_of_token, "Insufficient balance");
+    require(balanceOf[msg.sender] >= _ammouts_of_tokens, "Insufficient balance");
         
         // Using `-` and `+` directly for subtraction and addition
-        balanceOf[msg.sender] -= _number_of_token;
-        balanceOf[_to] += _number_of_token;
+        balanceOf[msg.sender] -= _ammouts_of_tokens;
+        balanceOf[_to] += _ammouts_of_tokens;
     
        return true;
-    }
+    } 
 
 }
