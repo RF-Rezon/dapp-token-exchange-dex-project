@@ -65,6 +65,15 @@ contract('Token', ([deployer, reciver]) => {   // ⚡ From Accounts array i took
             balanceOf.toString().should.equal(tokenFunc(100).toString())
         })
 
+        it('emits a transfer event', async ()=>{
+            const log = result.logs[0];
+            log.event.should.eq('Transfer');
+            const event = log.args;
+            event.from.toString().should.eq(deployer, 'from is correct')
+            event._to.toString().should.eq(reciver, 'reciver is correct')
+            event._ammouts_of_tokens.toString().should.eq(ammout.toString(), 'value is correct')  // eq is the short form of equal.
+        })
+
     })
 });
 

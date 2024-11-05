@@ -2,12 +2,17 @@
 pragma solidity ^0.8.13;
 
 contract Token {
+    // Value
     string public name = "Tej Token";
     string public symbol = "Tejgaon College";
     uint256 public decimals = 18;
     uint256 public totalSupply;
 
     mapping(address => uint256) public balanceOf; // ✋ Here balanceOf means who contains how much tokens. 
+
+    // Events 
+
+    event Transfer(address from, address _to, uint256 _ammouts_of_tokens);
 
     constructor ()  {
         totalSupply = 1000000 * (10 ** decimals);
@@ -26,7 +31,7 @@ contract Token {
         // Using `-` and `+` directly for subtraction and addition
         balanceOf[msg.sender] -= _ammouts_of_tokens;
         balanceOf[_to] += _ammouts_of_tokens;
-    
+        emit Transfer(msg.sender, _to, _ammouts_of_tokens);
        return true;
     } 
 
