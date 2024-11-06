@@ -26,6 +26,7 @@ contract Token {
 
     // Better way is here: 
 
+       require(_to != address(0));
        require(balanceOf[msg.sender] >= _ammouts_of_tokens);
         
         // Using `-` and `+` directly for subtraction and addition

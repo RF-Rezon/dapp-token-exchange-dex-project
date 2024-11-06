@@ -1,4 +1,4 @@
-const { tokenFunc, EVM_REVERT } = require('./helpers');
+const { tokenFunc, EVM_REVERT, INVALID_ADDRESS } = require('./helpers');
 
 const Token = artifacts.require('./Token');
 
@@ -85,6 +85,10 @@ contract('Token', ([deployer, receiver]) => {   // ⚡ From Accounts array i too
 
                 invalidAmount = tokenFunc(100);
                 await token.transfer(deployer, invalidAmount, { from: receiver }).should.be.rejectedWith(EVM_REVERT);
+            });
+
+            it('tracks valid receipent', async ()=>{
+                await token.transfer(INVALID_ADDRESS, ammout, {from: deployer}).should.be.rejectedWith(EVM_REVERT);
             });
         })
 

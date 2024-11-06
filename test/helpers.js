@@ -7,5 +7,7 @@ function tokenFunc (params) {
     }
 
 const EVM_REVERT = "VM Exception while processing transaction: revert";
+
+const INVALID_ADDRESS = '0x0000000000000000000000000000000000000000';
     
-module.exports = { tokenFunc , EVM_REVERT };
+module.exports = { tokenFunc , EVM_REVERT, INVALID_ADDRESS };
