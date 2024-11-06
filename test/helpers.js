@@ -5,5 +5,7 @@ function tokenFunc (params) {
        let wei = web3.utils.toWei(params.toString(), 'ether');
        return wei;
     }
+
+const EVM_REVERT = "VM Exception while processing transaction: revert";
     
-module.exports = { tokenFunc };
+module.exports = { tokenFunc , EVM_REVERT };

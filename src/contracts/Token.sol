@@ -26,7 +26,7 @@ contract Token {
 
     // Better way is here: 
 
-    require(balanceOf[msg.sender] >= _ammouts_of_tokens, "Insufficient balance");
+       require(balanceOf[msg.sender] >= _ammouts_of_tokens);
         
         // Using `-` and `+` directly for subtraction and addition
         balanceOf[msg.sender] -= _ammouts_of_tokens;
