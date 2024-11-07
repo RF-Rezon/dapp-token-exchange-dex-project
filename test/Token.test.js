@@ -99,20 +99,20 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
 
         beforeEach(async () => {
             amount = tokenFunc(100);
-            result = await token.approve(spender, amount, { from: deployer }); // Allowing the ammounts of tokens 'you' can transmit. I will hold this. 
+            result = await token.approve(spender, amount, { from: deployer }); // Allowing the ammounts of tokens spender can transmit. It will hold this. 
         })
 
         describe('success', () => {
             it('allocates on allowance for delegated token spending on exchange', async () => {
                 const allowance = await token.allowance(deployer, spender)
-                allowance.toString().should.eq(amount.toString());  // Now, i wll allow you if your transact money matched the pervious. 
+                allowance.toString().should.eq(amount.toString());  // From mapping i will get the amount. Comparing this with the amount i set.
             })
             it('emits a approval event', async () => {
                 const log = result.logs[0];
                 log.event.should.eq('Approval');
                 const event = log.args;
                 event.owner.toString().should.eq(deployer, 'owner is correct')
-                event._spender.toString().should.eq(spender, '_spender is correct')
+                event._spender.toString().should.eq(spender, 'spender is correct')
                 event._value.toString().should.eq(amount.toString(), 'value is correct')
             })
 
@@ -120,6 +120,59 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
         describe('failure', () => {
             it('rejects invalid spenders', async () => {
                 await token.approve(INVALID_ADDRESS, amount, { from: deployer }).should.be.rejected;
+            })
+        })
+
+    });
+
+
+    describe('delegeted token transfers', () => {    
+        let amount
+        let result
+
+        beforeEach(async () => {
+            amount = tokenFunc(100);
+            await token.approve(spender, amount, {from: deployer});
+        })
+
+        describe('success', async () => {
+            beforeEach(async () => {
+                result = await token.transferFrom(deployer, receiver, amount, { from: spender})
+            })
+
+            it('tranfer tokens', async () => {
+                let balanceOf;
+                balanceOf = await token.balanceOf(deployer);
+                balanceOf.toString().should.equal(tokenFunc(999900).toString())
+                balanceOf = await token.balanceOf(receiver);
+                balanceOf.toString().should.equal(tokenFunc(100).toString())
+            })
+
+            it('reset the allowence', async () => {
+                const allowance = await token.allowance(deployer, spender)
+                allowance.toString().should.eq('0');  // From mapping i will get the amount. Comparing this with the amount i set.
+            })
+
+            it('emits a transfer event', async () => {
+                const log = result.logs[0];
+                log.event.should.eq('Transfer');
+                const event = log.args;
+                event.from.toString().should.eq(deployer, 'from is correct')
+                event._to.toString().should.eq(receiver, 'receiver is correct')
+                event._value.toString().should.eq(amount.toString(), 'value is correct')  // eq is the short form of equal.
+            })
+        })
+
+
+        describe('failure', async () => {
+
+            it('rejects insufficient balances', async () => {
+                let invalidAmount = tokenFunc(1000000000); // Greater than total supply
+                await token.transferFrom(deployer, receiver, invalidAmount, { from: spender}).should.be.rejectedWith(EVM_REVERT);
+            })
+
+            it('tracks valid receipent', async () => {
+                await token.transferFrom(deployer, INVALID_ADDRESS, amount, { from: spender}).should.be.rejected;
             })
         })
 
