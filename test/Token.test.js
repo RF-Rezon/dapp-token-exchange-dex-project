@@ -13,10 +13,10 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
     const name = "Tej Token";
     const symbol = "Tejgaon College";
     const decimals = "18";
-    // const totalSupply =  "1000000000000000000000000";   >>>>>>>>>>>>>>>> WE ARE PUTTING 100 MILLION TOKEN IN FORMS OF WEI >>>>>>>>>>>>>>>>
+    // const totalSupply =  "1000000000000000000000000";  >>>>>>>>>>>>>>>> WE ARE PUTTING 100 MILLION TOKEN IN FORMS OF WEI
     const totalSupply = tokenFunc(1000000).toString();
 
-    beforeEach(async () => {                           // "beforeEach" should always under "describe". But its also allowed. 
+    beforeEach(async () => {   // "beforeEach" should always under "describe". But its also allowed. 
         token = await Token.new()
     })
  
@@ -43,7 +43,7 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
         })
     });
 
-    describe('sending tokens', () => {                       // >>>>>>>>>>>>>>>>>>>>> TOKEN IS LIKE MONEY !!! >>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    describe('sending tokens', () => {                      
         let amount
         let result
 
