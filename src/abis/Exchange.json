@@ -1,0 +1,75 @@
+{
+  "contractName": "Exchange",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/src/contracts/Exchange.sol\":\"Exchange\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/src/contracts/Exchange.sol\":{\"keccak256\":\"0x88b0df3ec806a057c8f35e0092392a86df68711975db854ada6bbc42b4699b5f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://8e1aef307f4ee6377c3d669feea1a3097349c08a9e02c0908634b114a8f7561a\",\"dweb:/ipfs/QmQivdBpZwhjt4RghdRmtDuf5KcDBdLrZp94GXfFPZfUCG\"]}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea2646970667358221220b7753cc633bd10e128706e981ed31a216467174048f29566d1cc7ea5b57dc0a264736f6c634300080d0033",
+  "deployedBytecode": "0x6080604052600080fdfea2646970667358221220b7753cc633bd10e128706e981ed31a216467174048f29566d1cc7ea5b57dc0a264736f6c634300080d0033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "61:20:0:-:0;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "61:20:0:-:0;;;;;",
+  "source": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.13;\r\n\r\ncontract Exchange {}\r\n",
+  "sourcePath": "G:\\Dapp Token Exchange (DEX) project\\dapp-token-exchange-dex-project\\src\\contracts\\Exchange.sol",
+  "ast": {
+    "absolutePath": "project:/src/contracts/Exchange.sol",
+    "exportedSymbols": {
+      "Exchange": [
+        2
+      ]
+    },
+    "id": 3,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".13"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "33:24:0"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "Exchange",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "id": 2,
+        "linearizedBaseContracts": [
+          2
+        ],
+        "name": "Exchange",
+        "nameLocation": "70:8:0",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 3,
+        "src": "61:20:0",
+        "usedErrors": []
+      }
+    ],
+    "src": "33:50:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.13+commit.abaa5c0e.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.16",
+  "updatedAt": "2024-11-09T10:17:39.485Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
