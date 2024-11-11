@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import "./Token.sol";
+
 contract Exchange {
     // [] Set the fee account
 
@@ -14,6 +16,9 @@ contract Exchange {
     // [] Deposit ether
     // [] Withdraw ether
     // [] Deposit tokens
+    function depositToken(address _token, uint _amount) public {
+        require(Token(_token).transferFrom(msg.sender, address(this), _amount));
+    }
     // [] Withdraw tokens
     // [] Check balances
     // [] Make order
