@@ -50,6 +50,7 @@ contract Token {
         emit Approval(msg.sender, _spender, _value);
         return true;
     }
+
     function transferFrom(
         address _from,
         address _to,
