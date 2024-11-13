@@ -8,6 +8,7 @@ contract Exchange {
 
     address public feeAccount; // 2nd account at Ganache. The account that receive exchange fees
     uint public feePercent; //  the fee as parcent
+    address constant ETHER = address(0); // store Ether in tokens mapping with black addresses. 2 works in one go.
     mapping(address => mapping(address => uint256)) public tokens;
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
@@ -17,16 +18,18 @@ contract Exchange {
         feePercent = _feeParcent;
     }
     // [] Deposit ether
+    function depositEther() public payable {
+        tokens[ETHER][msg.sender] += msg.value;
+        emit Deposit(ETHER, msg.sender, msg.value, tokens[ETHER][msg.sender]);
+    }
     // [] Withdraw ether
+
     // [] Deposit tokens
-    // send token to this contract
-    // manage deposit - update balance
-    // emit event
     function depositToken(address _token, uint _amount) public {
-        // TODO: Don't allow ether deposit
-        require(Token(_token).transferFrom(msg.sender, address(this), _amount));
-        tokens[_token][msg.sender] += _amount;
-        emit Deposit(_token, msg.sender, _amount, tokens[_token][msg.sender]);
+        require(_token != ETHER);
+        require(Token(_token).transferFrom(msg.sender, address(this), _amount)); // send token to this contract
+        tokens[_token][msg.sender] += _amount; // manage deposit - update balance
+        emit Deposit(_token, msg.sender, _amount, tokens[_token][msg.sender]); // emit event
     }
 
     // [] Withdraw tokens

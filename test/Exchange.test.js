@@ -59,10 +59,11 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
         })
         describe('failure', () => {
             it('checks if trying deposit ether here', async() => {
-                // TODO: fill me in!.....
+                let invalidAmount = tokenFunc(10);
+                await exchange.depositToken(INVALID_ADDRESS, invalidAmount, { from: user1 }).should.be.rejected;
             })
-            it('fauls when no tokens are approved', async () => {
-                let invalidAmount = tokenFunc(10); // Greater than total supply
+            it('fails when no tokens are approved', async () => {
+                let invalidAmount = tokenFunc(10); 
                 await exchange.depositToken(token.address, invalidAmount, { from: user1 }).should.be.rejectedWith(EVM_REVERT);
             })
         })
