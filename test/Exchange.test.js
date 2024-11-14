@@ -1,5 +1,5 @@
-const { fromPairs } = require('lodash');
-const { tokenFunc, EVM_REVERT, INVALID_ADDRESS } = require('./helpers');
+const { values } = require('lodash');
+const { tokenFunc, etherFunc, EVM_REVERT, INVALID_ADDRESS } = require('./helpers');
 
 const Exchange = artifacts.require('./Exchange');
 const Token = artifacts.require('./Token');
@@ -31,6 +31,19 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
         })
     })
 
+    describe('deposit ether', () => {
+        let result;
+        let amount;
+        beforeEach(async()=>{
+            amount = etherFunc(1);
+            result = await exchange.depositEther({from: user1, value: amount});
+        })
+        it('tracks the ether deposit', async() => {
+            const balance = await exchange.tokens(INVALID_ADDRESS, user1);
+            balance.toString().should.equal(amount.toString());
+        })
+    });
+
     describe('deposit tokens', () => {
         let result;
         let amount = tokenFunc(10);
@@ -59,7 +72,7 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
         })
         describe('failure', () => {
             it('checks if trying deposit ether here', async() => {
-                let invalidAmount = tokenFunc(10);
+                let invalidAmount = etherFunc(10);
                 await exchange.depositToken(INVALID_ADDRESS, invalidAmount, { from: user1 }).should.be.rejected;
             })
             it('fails when no tokens are approved', async () => {
