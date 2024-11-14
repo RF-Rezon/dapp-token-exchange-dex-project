@@ -17,6 +17,13 @@ contract Exchange {
         feeAccount = _feeAccount;
         feePercent = _feeParcent;
     }
+
+    // fallback() external {
+    //     revert();
+    // }
+    receive() external payable {
+        revert();
+    }
     // [] Deposit ether
     function depositEther() public payable {
         tokens[ETHER][msg.sender] += msg.value;
