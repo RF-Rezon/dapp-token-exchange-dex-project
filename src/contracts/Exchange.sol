@@ -12,6 +12,12 @@ contract Exchange {
     mapping(address => mapping(address => uint256)) public tokens;
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
+    event Withdraw(
+        address token,
+        address user,
+        uint256 amount,
+        uint256 balance
+    );
 
     constructor(address _feeAccount, uint _feeParcent) {
         feeAccount = _feeAccount;
@@ -30,7 +36,12 @@ contract Exchange {
         emit Deposit(ETHER, msg.sender, msg.value, tokens[ETHER][msg.sender]);
     }
     // [] Withdraw ether
-
+    function withdrawEther(uint256 _amount) public {
+        require(tokens[ETHER][msg.sender] >= _amount);
+        tokens[ETHER][msg.sender] -= _amount;
+        payable(msg.sender).transfer(_amount);
+        emit Withdraw(ETHER, msg.sender, _amount, tokens[ETHER][msg.sender]);
+    }
     // [] Deposit tokens
     function depositToken(address _token, uint _amount) public {
         require(_token != ETHER);
