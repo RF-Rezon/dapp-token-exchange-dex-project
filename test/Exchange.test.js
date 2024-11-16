@@ -161,4 +161,18 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //         });
     //     });    
     // });
+    
+    
+    describe('checking balance', () => {
+        let amount; 
+        beforeEach(async()=>{
+            amount = etherFunc(10);
+                    await exchange.depositEther({from: user1, value: amount});
+                })
+        
+    it('returns user balance', async () => {
+                const balance = await exchange.balanceOf(INVALID_ADDRESS, user1);            
+                balance.toString().should.equal(amount.toString());
+            })
+    });
 })

@@ -58,6 +58,12 @@ contract Exchange {
         emit Withdraw(_token, msg.sender, _amount, tokens[_token][msg.sender]);
     }
     // [] Check balances
+    function balanceOf(
+        address _token,
+        address _user
+    ) public view returns (uint256) {
+        return tokens[_token][_user];
+    }
     // [] Make order
     // [] Cancel order
     // [] Fill order
