@@ -1,4 +1,3 @@
-const { values } = require('lodash');
 const { tokenFunc, etherFunc, EVM_REVERT, INVALID_ADDRESS } = require('./helpers');
 
 const Exchange = artifacts.require('./Exchange');
@@ -65,13 +64,12 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //             balance.toString().should.equal('0');
     //         })
     
-    //         it('emits a withdraw event', async () => {
+    //         it('emits a withdraw event', () => {
     //             const log = result.logs[0];
     //             log.event.should.eq('Withdraw');
     //             const event = log.args;
-    
-    //             event.token.toString().should.eq(INVALID_ADDRESS, 'token address is correct');
-    //             event.user.toString().should.eq(user1, 'user is correct');
+    //             event.token.should.eq(INVALID_ADDRESS, 'token address is correct');
+    //             event.user.should.eq(user1, 'user is correct');
     //             event.amount.toString().should.eq(amount.toString(), 'amount is correct');
     //             event.balance.toString().should.eq('0', 'balance is correct');
     //         })
@@ -86,10 +84,11 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
 
     // describe('deposit tokens', () => {
     //     let result;
-    //     let amount = tokenFunc(10);
+    //     let amount;
 
     //     describe('success', () => {
     //         beforeEach(async () => {
+    //             amount = tokenFunc(10);
     //             await token.approve(exchange.address, amount, { from: user1 });
     //             result = await exchange.depositToken(token.address, amount, { from: user1 });
     //         })
@@ -100,12 +99,12 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //             balance = await exchange.tokens(token.address, user1);
     //             balance.toString().should.equal(amount.toString());
     //         })
-    //         it('emits a deposit event', async () => {
+    //         it('emits a deposit event',() => {
     //             const log = result.logs[0];
     //             log.event.should.eq('Deposit');
     //             const event = log.args;
-    //             event.token.toString().should.eq(token.address, 'token address is correct')
-    //             event.user.toString().should.eq(user1, 'user is correct')
+    //             event.token.should.eq(token.address, 'token address is correct')
+    //             event.user.should.eq(user1, 'user is correct')
     //             event.amount.toString().should.eq(amount.toString(), 'amount is correct')  // eq is the short form of equal.
     //             event.balance.toString().should.eq(amount.toString(), 'balance is correct')
     //         })
@@ -120,5 +119,46 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //             await exchange.depositToken(token.address, invalidAmount2, { from: user1 }).should.be.rejectedWith(EVM_REVERT);
     //         })
     //     })
+    // });
+
+    // describe('withdraw token', () => {
+    //     let result; 
+    //     let amount;
+    //     describe('success', () => {
+    //         beforeEach(async () => {
+    //             amount = tokenFunc(10);
+    //             // Approve first
+    //             await token.approve(exchange.address, amount, {from: user1 });
+    //             // Deposit Token before withdrawal
+    //             await exchange.depositToken(token.address, amount, { from: user1 });
+    //             // Perform withdrawal and store the transaction result
+    //             result = await exchange.withdrawToken(token.address, amount, { from: user1 });
+    //         })
+    
+    //         it('withdraws Token funds', async () => {
+    //             const balance = await exchange.tokens(token.address, user1);            
+    //             balance.toString().should.equal('0');
+    //         })
+    
+    //         it('emits a withdraw event', () => {
+    //             const log = result.logs[0];
+    //             log.event.should.eq('Withdraw');
+    //             const event = log.args;
+    //             event.token.should.eq(token.address);
+    //             event.user.should.eq(user1);
+    //             event.amount.toString().should.eq(amount.toString());
+    //             event.balance.toString().should.eq('0');
+    //         })
+    //     });
+    
+    //     describe('failure', () => {
+    //      const invalidAmmount = tokenFunc(100);
+    //         it('rejects withdrawals exceeding the balance', async () => {
+    //             await exchange.withdrawToken(token.address, invalidAmmount, { from: user1 }).should.be.rejectedWith(EVM_REVERT);
+    //         });
+    //         it('rejects if Ether withdrawals', async () => {
+    //             await exchange.withdrawToken(INVALID_ADDRESS, amount, { from: user1 }).should.be.rejectedWith(EVM_REVERT);
+    //         });
+    //     });    
     // });
 })

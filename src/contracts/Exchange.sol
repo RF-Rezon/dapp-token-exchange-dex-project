@@ -51,6 +51,12 @@ contract Exchange {
     }
 
     // [] Withdraw tokens
+    function withdrawToken(address _token, uint _amount) public {
+        require(tokens[_token][msg.sender] >= _amount);
+        require(Token(_token).transfer(msg.sender, _amount));
+        tokens[_token][msg.sender] -= _amount;
+        emit Withdraw(_token, msg.sender, _amount, tokens[_token][msg.sender]);
+    }
     // [] Check balances
     // [] Make order
     // [] Cancel order
