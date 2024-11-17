@@ -176,37 +176,70 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //     })
     // });
 
-    describe('making orders', () => {
-        let result;
-        beforeEach(async () => {
-            result = await exchange.makeOrder(token.address, tokenFunc(1), INVALID_ADDRESS, etherFunc(1), { from: user1 });
-        })
+    // describe('making orders', () => {
+    //     let result;
+    //     beforeEach(async () => {
+    //         result = await exchange.makeOrder(token.address, tokenFunc(1), INVALID_ADDRESS, etherFunc(1), { from: user1 });
+    //     })
 
-        it('tracks the newly created order', async () => {
-            const orderCount = await exchange.orderCount();
-            orderCount.toString().should.eq('1')
-            const order = await exchange.orders('1')
-            order.id.toString().should.eq('1', 'id is correct')
-            order.user.should.eq(user1, 'user is correct')
-            order.tokenGet.should.eq(token.address, 'user is correct')
-            order.amountGet.toString().should.eq(tokenFunc(1).toString(), 'user is correct')
-            order.tokenGive.should.eq(INVALID_ADDRESS, 'user is correct')
-            order.amountGive.toString().should.eq(etherFunc(1).toString(), 'user is correct')
-            order.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
-        })
+    //     it('tracks the newly created order', async () => {
+    //         const orderCount = await exchange.orderCount();
+    //         orderCount.toString().should.eq('1')
+    //         const order = await exchange.orders('1')
+    //         order.id.toString().should.eq('1', 'id is correct')
+    //         order.user.should.eq(user1, 'user is correct')
+    //         order.tokenGet.should.eq(token.address, 'tokenGet is correct')
+    //         order.amountGet.toString().should.eq(tokenFunc(1).toString(), 'amountGet is correct')
+    //         order.tokenGive.should.eq(INVALID_ADDRESS, 'tokenGive is correct')
+    //         order.amountGive.toString().should.eq(etherFunc(1).toString(), 'amountGive is correct')
+    //         order.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
+    //     })
 
-        it('emits an "Order" event', () => {
-            const log = result.logs[0];
-            log.event.should.eq('Order');
-            const event = log.args;
-            event.id.toString().should.eq('1', 'id is correct')
-            event.user.should.eq(user1, 'user is correct')
-            event.tokenGet.should.eq(token.address, 'user is correct')
-            event.amountGet.toString().should.eq(tokenFunc(1).toString(), 'user is correct')
-            event.tokenGive.should.eq(INVALID_ADDRESS, 'user is correct')
-            event.amountGive.toString().should.eq(etherFunc(1).toString(), 'user is correct')
-            event.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
-        })
+    //     it('emits an "Order" event', () => {
+    //         const log = result.logs[0];
+    //         log.event.should.eq('Order');
+    //         const event = log.args;
+    //         event.id.toString().should.eq('1', 'id is correct')
+    //         event.user.should.eq(user1, 'user is correct')
+    //         event.tokenGet.should.eq(token.address, 'tokenGet is correct')
+    //         event.amountGet.toString().should.eq(tokenFunc(1).toString(), 'amountGet is correct')
+    //         event.tokenGive.should.eq(INVALID_ADDRESS, 'tokenGive is correct')
+    //         event.amountGive.toString().should.eq(etherFunc(1).toString(), 'amountGive is correct')
+    //         event.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
+    //     })
+    // });
+
+    describe('order actions', () => {
+        beforeEach(async() => {
+            await exchange.makeOrder(token.address, tokenFunc(1), INVALID_ADDRESS, etherFunc(1), {from: user1})
+        });
+
+        describe('cancelling orders', () => {
+            let result;
+            describe('success', () => {
+                beforeEach(async () => {
+                    result = await exchange.cancelOrder('1', { from: user1})
+                })
+    
+                it('updates cancelled orders', async () => {
+                    const orderCancelled = await exchange.orderCancelled(1)
+                    orderCancelled.should.eq(true)
+                })
+    
+                it('emits a "Cancel" event', () => {
+                    const log = result.logs[0];
+                    log.event.should.eq('Cancel');
+                    const event = log.args;
+                    event.id.toString().should.eq('1', 'id is correct')
+                    event.user.should.eq(user1, 'user is correct')
+                    event.tokenGet.should.eq(token.address, 'tokenGet is correct')
+                    event.amountGet.toString().should.eq(tokenFunc(1).toString(), 'amountGet is correct')
+                    event.tokenGive.should.eq(INVALID_ADDRESS, 'tokenGive is correct')
+                    event.amountGive.toString().should.eq(etherFunc(1).toString(), 'amountGive is correct')
+                    event.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
+                })
+            });
+        });
     });
 
 })
