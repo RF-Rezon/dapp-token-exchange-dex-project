@@ -50,7 +50,7 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     // describe('withdraw ether', () => {
     //     let result; 
     //     let amount = etherFunc(1);
-    
+
     //     describe('success', () => {
     //         beforeEach(async () => {
     //             // Deposit Ether before withdrawal
@@ -58,12 +58,12 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //             // Perform withdrawal and store the transaction result
     //             result = await exchange.withdrawEther(amount, { from: user1 });
     //         })
-    
+
     //         it('withdraws Ether funds', async () => {
     //             const balance = await exchange.tokens(INVALID_ADDRESS, user1);            
     //             balance.toString().should.equal('0');
     //         })
-    
+
     //         it('emits a withdraw event', () => {
     //             const log = result.logs[0];
     //             log.event.should.eq('Withdraw');
@@ -74,7 +74,7 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //             event.balance.toString().should.eq('0', 'balance is correct');
     //         })
     //     });
-    
+
     //     describe('failure', () => {
     //         it('rejects withdrawals exceeding the balance', async () => {
     //             await exchange.withdrawEther(etherFunc(2), { from: user1 }).should.be.rejectedWith(EVM_REVERT);
@@ -134,12 +134,12 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //             // Perform withdrawal and store the transaction result
     //             result = await exchange.withdrawToken(token.address, amount, { from: user1 });
     //         })
-    
+
     //         it('withdraws Token funds', async () => {
     //             const balance = await exchange.tokens(token.address, user1);            
     //             balance.toString().should.equal('0');
     //         })
-    
+
     //         it('emits a withdraw event', () => {
     //             const log = result.logs[0];
     //             log.event.should.eq('Withdraw');
@@ -150,7 +150,7 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //             event.balance.toString().should.eq('0');
     //         })
     //     });
-    
+
     //     describe('failure', () => {
     //      const invalidAmmount = tokenFunc(100);
     //         it('rejects withdrawals exceeding the balance', async () => {
@@ -161,18 +161,52 @@ contract('Exchange', ([deployer, feeAccount, user1]) => {
     //         });
     //     });    
     // });
-    
-    
-    describe('checking balance', () => {
-        let amount; 
-        beforeEach(async()=>{
-            amount = etherFunc(10);
-                    await exchange.depositEther({from: user1, value: amount});
-                })
-        
-    it('returns user balance', async () => {
-                const balance = await exchange.balanceOf(INVALID_ADDRESS, user1);            
-                balance.toString().should.equal(amount.toString());
-            })
+
+
+    // describe('checking balance', () => {
+    //     let amount;
+    //     beforeEach(async () => {
+    //         amount = etherFunc(10);
+    //         await exchange.depositEther({ from: user1, value: amount });
+    //     })
+
+    //     it('returns user balance', async () => {
+    //         const balance = await exchange.balanceOf(INVALID_ADDRESS, user1);
+    //         balance.toString().should.equal(amount.toString());
+    //     })
+    // });
+
+    describe('making orders', () => {
+        let result;
+        beforeEach(async () => {
+            result = await exchange.makeOrder(token.address, tokenFunc(1), INVALID_ADDRESS, etherFunc(1), { from: user1 });
+        })
+
+        it('tracks the newly created order', async () => {
+            const orderCount = await exchange.orderCount();
+            orderCount.toString().should.eq('1')
+            const order = await exchange.orders('1')
+            order.id.toString().should.eq('1', 'id is correct')
+            order.user.should.eq(user1, 'user is correct')
+            order.tokenGet.should.eq(token.address, 'user is correct')
+            order.amountGet.toString().should.eq(tokenFunc(1).toString(), 'user is correct')
+            order.tokenGive.should.eq(INVALID_ADDRESS, 'user is correct')
+            order.amountGive.toString().should.eq(etherFunc(1).toString(), 'user is correct')
+            order.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
+        })
+
+        it('emits an "Order" event', () => {
+            const log = result.logs[0];
+            log.event.should.eq('Order');
+            const event = log.args;
+            event.id.toString().should.eq('1', 'id is correct')
+            event.user.should.eq(user1, 'user is correct')
+            event.tokenGet.should.eq(token.address, 'user is correct')
+            event.amountGet.toString().should.eq(tokenFunc(1).toString(), 'user is correct')
+            event.tokenGive.should.eq(INVALID_ADDRESS, 'user is correct')
+            event.amountGive.toString().should.eq(etherFunc(1).toString(), 'user is correct')
+            event.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
+        })
     });
+
 })

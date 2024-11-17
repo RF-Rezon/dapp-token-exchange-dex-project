@@ -10,6 +10,9 @@ contract Exchange {
     uint public feePercent; //  the fee as parcent
     address constant ETHER = address(0); // store Ether in tokens mapping with black addresses. 2 works in one go.
     mapping(address => mapping(address => uint256)) public tokens;
+    mapping(uint256 => _Order) public orders;
+
+    uint256 public orderCount;
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(
@@ -18,6 +21,26 @@ contract Exchange {
         uint256 amount,
         uint256 balance
     );
+
+    event Order(
+        uint256 id,
+        address user,
+        address tokenGet,
+        uint256 amountGet,
+        address tokenGive,
+        uint256 amountGive,
+        uint256 timestamp
+    );
+
+    struct _Order {
+        uint256 id;
+        address user;
+        address tokenGet;
+        uint256 amountGet;
+        address tokenGive;
+        uint256 amountGive;
+        uint256 timestamp;
+    }
 
     constructor(address _feeAccount, uint _feeParcent) {
         feeAccount = _feeAccount;
@@ -65,6 +88,32 @@ contract Exchange {
         return tokens[_token][_user];
     }
     // [] Make order
+    function makeOrder(
+        address _tokenGet, // Token user want to purchase
+        uint256 _amountGet, // The amouts of tokens user wanna get
+        address _tokenGive,
+        uint256 _amountGive
+    ) public {
+        orderCount = orderCount + 1;
+        orders[orderCount] = _Order(
+            orderCount,
+            msg.sender,
+            _tokenGet,
+            _amountGet,
+            _tokenGive,
+            _amountGive,
+            block.timestamp
+        );
+        emit Order(
+            orderCount,
+            msg.sender,
+            _tokenGet,
+            _amountGet,
+            _tokenGive,
+            _amountGive,
+            block.timestamp
+        );
+    }
     // [] Cancel order
     // [] Fill order
     // [] Change fees
