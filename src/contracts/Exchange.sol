@@ -9,11 +9,12 @@ contract Exchange {
     address public feeAccount; // 2nd account at Ganache. The account that receive exchange fees
     uint public feePercent; //  the fee as parcent
     address constant ETHER = address(0); // store Ether in tokens mapping with black addresses. 2 works in one go.
+    uint256 public orderCount;
+
     mapping(address => mapping(address => uint256)) public tokens;
     mapping(uint256 => _Order) public orders;
-
-    uint256 public orderCount;
     mapping(uint256 => bool) public orderCancelled;
+    mapping(uint256 => bool) public orderFilled;
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(
@@ -40,6 +41,17 @@ contract Exchange {
         uint256 amountGet,
         address tokenGive,
         uint256 amountGive,
+        uint256 timestamp
+    );
+
+    event Trade(
+        uint256 id,
+        address user,
+        address tokenGet,
+        uint256 amountGet,
+        address tokenGive,
+        uint256 amountGive,
+        address userFill,
         uint256 timestamp
     );
 
@@ -143,5 +155,59 @@ contract Exchange {
         );
     }
     // [] Fill order
+    function fillOrder(uint256 _id) public {
+        // require(_id > 0 && _id <= orderCount);
+        // require(!orderFilled[_id]);
+        // require(!orderCancelled[_id]);
+        _Order storage _order = orders[_id];
+        _trade(
+            _order.id,
+            _order.user,
+            _order.tokenGet,
+            _order.amountGet,
+            _order.tokenGive,
+            _order.amountGive
+        );
+        orderFilled[_order.id] = true;
+    }
+    function _trade(
+        uint256 _orderId,
+        address _user,
+        address _tokenGet, // Token being received
+        uint256 _amountGet, // Amount being received
+        address _tokenGive, // Token being given
+        uint256 _amountGive // Amount being given
+    ) internal {
+        uint256 _initialFeeAmount = _amountGive * feePercent;
+        uint256 _feeAmount = _initialFeeAmount / 100;
+        uint256 totalAmmountNeedToDeduct = _amountGet + _feeAmount;
+
+        // Deduct tokens from user1 (msg.sender)
+        tokens[_tokenGet][msg.sender] -= totalAmmountNeedToDeduct;
+
+        // Credit tokens to user2 (_user)
+        tokens[_tokenGet][_user] += _amountGet;
+
+        // Add the fee to the feeAccount
+        tokens[_tokenGet][feeAccount] += _feeAmount;
+
+        // Deduct tokens from user2 (_user)
+        tokens[_tokenGive][_user] -= _amountGive;
+
+        // Credit tokens to user1 (msg.sender)
+        tokens[_tokenGive][msg.sender] += _amountGive;
+
+        emit Trade(
+            _orderId, // Add the trade ID
+            _user, // The user making the trade
+            _tokenGet, // Token being received
+            _amountGet, // Amount being received
+            _tokenGive, // Token being given
+            _amountGive, // Amount being given
+            msg.sender, // User who filled the trade (this could be the msg.sender)
+            block.timestamp // Timestamp of the trade
+        );
+    }
+
     // [] Change fees
 }
