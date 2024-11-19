@@ -9,12 +9,13 @@ contract Exchange {
     address public feeAccount; // 2nd account at Ganache. The account that receive exchange fees
     uint public feePercent; //  the fee as parcent
     address constant ETHER = address(0); // store Ether in tokens mapping with black addresses. 2 works in one go.
-    uint256 public orderCount;
 
     mapping(address => mapping(address => uint256)) public tokens;
     mapping(uint256 => _Order) public orders;
     mapping(uint256 => bool) public orderCancelled;
     mapping(uint256 => bool) public orderFilled;
+
+    uint256 public orderCount;
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(
@@ -51,8 +52,7 @@ contract Exchange {
         uint256 amountGet,
         address tokenGive,
         uint256 amountGive,
-        address userFill,
-        uint256 timestamp
+        address userFill
     );
 
     struct _Order {
@@ -156,9 +156,9 @@ contract Exchange {
     }
     // [] Fill order
     function fillOrder(uint256 _id) public {
-        // require(_id > 0 && _id <= orderCount);
-        // require(!orderFilled[_id]);
-        // require(!orderCancelled[_id]);
+        require(_id > 0 && _id <= orderCount);
+        require(!orderFilled[_id]);
+        require(!orderCancelled[_id]);
         _Order storage _order = orders[_id];
         _trade(
             _order.id,
@@ -178,22 +178,24 @@ contract Exchange {
         address _tokenGive, // Token being given
         uint256 _amountGive // Amount being given
     ) internal {
+        // Fee is paid by the user who fills the order
+        // Fee deducted from _amountGive
+
         uint256 _initialFeeAmount = _amountGive * feePercent;
         uint256 _feeAmount = _initialFeeAmount / 100;
         uint256 totalAmmountNeedToDeduct = _amountGet + _feeAmount;
 
+        // Execute trade >>>>>>>>>>>>>>>>>
         // Deduct tokens from user1 (msg.sender)
         tokens[_tokenGet][msg.sender] -= totalAmmountNeedToDeduct;
-
         // Credit tokens to user2 (_user)
         tokens[_tokenGet][_user] += _amountGet;
 
+        // Charge fees  >>>>>>>>>>>>>>>>>>>>>>
         // Add the fee to the feeAccount
         tokens[_tokenGet][feeAccount] += _feeAmount;
-
         // Deduct tokens from user2 (_user)
         tokens[_tokenGive][_user] -= _amountGive;
-
         // Credit tokens to user1 (msg.sender)
         tokens[_tokenGive][msg.sender] += _amountGive;
 
@@ -204,10 +206,7 @@ contract Exchange {
             _amountGet, // Amount being received
             _tokenGive, // Token being given
             _amountGive, // Amount being given
-            msg.sender, // User who filled the trade (this could be the msg.sender)
-            block.timestamp // Timestamp of the trade
+            msg.sender // User who filled the trade (this could be the msg.sender)
         );
     }
-
-    // [] Change fees
 }
