@@ -15,7 +15,7 @@ contract Exchange {
     mapping(uint256 => bool) public orderCancelled;
     mapping(uint256 => bool) public orderFilled;
 
-    uint256 public orderCount;
+    uint256 public totalOrder;
 
     event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(
@@ -52,7 +52,7 @@ contract Exchange {
         uint256 amountGet,
         address tokenGive,
         uint256 amountGive,
-        address userFill
+        uint256 timestamp
     );
 
     struct _Order {
@@ -117,9 +117,9 @@ contract Exchange {
         address _tokenGive,
         uint256 _amountGive
     ) public {
-        orderCount++;
-        orders[orderCount] = _Order(
-            orderCount,
+        totalOrder++;
+        orders[totalOrder] = _Order(
+            totalOrder,
             msg.sender,
             _tokenGet,
             _amountGet,
@@ -128,7 +128,7 @@ contract Exchange {
             block.timestamp
         );
         emit Order(
-            orderCount,
+            totalOrder,
             msg.sender,
             _tokenGet,
             _amountGet,
@@ -156,7 +156,7 @@ contract Exchange {
     }
     // [] Fill order
     function fillOrder(uint256 _id) public {
-        require(_id > 0 && _id <= orderCount);
+        require(_id > 0 && _id <= totalOrder);
         require(!orderFilled[_id]);
         require(!orderCancelled[_id]);
         _Order storage _order = orders[_id];
@@ -166,7 +166,8 @@ contract Exchange {
             _order.tokenGet,
             _order.amountGet,
             _order.tokenGive,
-            _order.amountGive
+            _order.amountGive,
+            _order.timestamp
         );
         orderFilled[_order.id] = true;
     }
@@ -176,7 +177,8 @@ contract Exchange {
         address _tokenGet, // Token being received
         uint256 _amountGet, // Amount being received
         address _tokenGive, // Token being given
-        uint256 _amountGive // Amount being given
+        uint256 _amountGive, // Amount being given
+        uint256 _timestamp
     ) internal {
         // Fee is paid by the user who fills the order
         // Fee deducted from _amountGive
@@ -206,7 +208,7 @@ contract Exchange {
             _amountGet, // Amount being received
             _tokenGive, // Token being given
             _amountGive, // Amount being given
-            msg.sender // User who filled the trade (this could be the msg.sender)
+            _timestamp
         );
     }
 }
