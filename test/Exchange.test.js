@@ -1,4 +1,4 @@
-const { tokenFunc, etherFunc, EVM_REVERT, INVALID_ADDRESS } = require('./helpers');
+const { tokenFunc, etherFunc, EVM_REVERT, ETHER_ADDRESS } = require('./helpers');
 
 const Exchange = artifacts.require('./Exchange');
 const Token = artifacts.require('./Token');
@@ -42,7 +42,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
             await exchange.depositEther({from: user1, value: amount});
         })
         it('tracks the ether deposit', async() => {
-            const balance = await exchange.tokens(INVALID_ADDRESS, user1);
+            const balance = await exchange.tokens(ETHER_ADDRESS, user1);
             balance.toString().should.eq(amount.toString())
         })
     });
@@ -60,7 +60,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
             })
 
             it('withdraws Ether funds', async () => {
-                const balance = await exchange.tokens(INVALID_ADDRESS, user1);            
+                const balance = await exchange.tokens(ETHER_ADDRESS, user1);            
                 balance.toString().should.eq('0');
             })
 
@@ -68,7 +68,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
                 const log = result.logs[0];
                 log.event.should.eq('Withdraw');
                 const event = log.args;
-                event.token.should.eq(INVALID_ADDRESS, 'token address is correct');
+                event.token.should.eq(ETHER_ADDRESS, 'token address is correct');
                 event.user.should.eq(user1, 'user is correct');
                 event.amount.toString().should.eq(amount.toString(), 'amount is correct');
                 event.balance.toString().should.eq('0', 'balance is correct');
@@ -112,7 +112,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
         describe('failure', () => {
             it('checks if trying deposit ether here', async() => {
                 let invalidAmount = etherFunc(10);
-                await exchange.depositToken(INVALID_ADDRESS, invalidAmount, { from: user1 }).should.be.rejected;
+                await exchange.depositToken(ETHER_ADDRESS, invalidAmount, { from: user1 }).should.be.rejected;
             })
             it('fails when no tokens are approved', async () => {
                 let invalidAmount2 = tokenFunc(10); 
@@ -157,7 +157,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
                 await exchange.withdrawToken(token.address, invalidAmmount, { from: user1 }).should.be.rejectedWith(EVM_REVERT);
             });
             it('rejects if Ether withdrawals', async () => {
-                await exchange.withdrawToken(INVALID_ADDRESS, amount, { from: user1 }).should.be.rejectedWith(EVM_REVERT);
+                await exchange.withdrawToken(ETHER_ADDRESS, amount, { from: user1 }).should.be.rejectedWith(EVM_REVERT);
             });
         });    
     });
@@ -170,7 +170,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
         })
 
         it('returns user balance', async () => {
-            const balance = await exchange.balanceOf(INVALID_ADDRESS, user1);
+            const balance = await exchange.balanceOf(ETHER_ADDRESS, user1);
             balance.toString().should.eq(amount.toString());
         })
     });
@@ -179,7 +179,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
         let result;
 
         beforeEach(async () => {
-            result = await exchange.makeOrder(token.address, tokenFunc(1), INVALID_ADDRESS, etherFunc(1), {from: user1});
+            result = await exchange.makeOrder(token.address, tokenFunc(1), ETHER_ADDRESS, etherFunc(1), {from: user1});
         }); 
 
         it('tracks the newly created order', async () => {
@@ -192,7 +192,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
             order.user.should.eq(user1, 'user is correct');
             order.tokenGet.should.eq(token.address, 'tokenGive is correct');
             order.amountGet.toString().should.eq(tokenFunc(1).toString(), 'amountGet is correct');
-            order.tokenGive.should.eq(INVALID_ADDRESS, 'tokenGive is correct');
+            order.tokenGive.should.eq(ETHER_ADDRESS, 'tokenGive is correct');
             order.amountGive.toString().should.eq(etherFunc(1).toString(), 'amountGive is correct');
             order.timestamp.toString().length.should.be.at.least(1, 'timestamp is present');
         }); 
@@ -205,7 +205,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
             event.user.toString().should.eq(user1, 'user is correct');
             event.tokenGet.should.eq(token.address, 'tokenGet is correct');
             event.amountGet.toString().should.eq(tokenFunc(1).toString(), 'amountGet is correct');
-            event.tokenGive.should.eq(INVALID_ADDRESS, 'tokenGive is correct');
+            event.tokenGive.should.eq(ETHER_ADDRESS, 'tokenGive is correct');
             event.amountGive.toString().should.eq(etherFunc(1).toString(), 'amountGive is correct');
             event.timestamp.toString().length.should.be.at.least(1, 'timestamp is present');
         });
@@ -222,7 +222,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
             await exchange.depositToken(token.address, tokenFunc(2), { from: user2 });
 
             // user1 makes an order to buy tokens with Ether
-            await exchange.makeOrder(token.address, tokenFunc(1), INVALID_ADDRESS, etherFunc(1), { from: user1 })
+            await exchange.makeOrder(token.address, tokenFunc(1), ETHER_ADDRESS, etherFunc(1), { from: user1 })
         });
 
         describe('filling orders', async () => {
@@ -237,9 +237,9 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
                     let balance;
                     balance = await exchange.balanceOf(token.address, user1);
                     balance.toString().should.eq(tokenFunc(1).toString(), 'user1 received tokens');
-                    balance = await exchange.balanceOf(INVALID_ADDRESS, user2);
+                    balance = await exchange.balanceOf(ETHER_ADDRESS, user2);
                     balance.toString().should.eq(etherFunc(1).toString(), 'user2 received ether');
-                    balance = await exchange.balanceOf(INVALID_ADDRESS, user1);
+                    balance = await exchange.balanceOf(ETHER_ADDRESS, user1);
                     balance.toString().should.eq('0', 'user2 Ether deducted');
                     balance = await exchange.balanceOf(token.address, user2);
                     balance.toString().should.eq(tokenFunc(0.9).toString(), 'user2 tokens deducted');
@@ -260,7 +260,7 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
                 event.user.should.eq(user1, 'user is correct');
                 event.tokenGet.toString().should.eq(token.address, 'tokenGet is correct');
                 event.amountGet.toString().should.eq(tokenFunc(1).toString(), 'amountGet is correct');
-                event.tokenGive.toString().should.eq(INVALID_ADDRESS, 'tokenGive is correct');
+                event.tokenGive.toString().should.eq(ETHER_ADDRESS, 'tokenGive is correct');
                 event.amountGive.toString().should.eq(etherFunc(1).toString(), 'amountGive is correct');
             });
         });
@@ -309,11 +309,11 @@ contract('Exchange', ([deployer, feeAccount, user1, user2]) => {
                     event.user.should.eq(user1, 'user is correct')
                     event.tokenGet.should.eq(token.address, 'tokenGet is correct')
                     event.amountGet.toString().should.eq(tokenFunc(1).toString(), 'amountGet is correct')
-                    event.tokenGive.should.eq(INVALID_ADDRESS, 'tokenGive is correct')
+                    event.tokenGive.should.eq(ETHER_ADDRESS, 'tokenGive is correct')
                     event.amountGive.toString().should.eq(etherFunc(1).toString(), 'amountGive is correct')
                     event.timestamp.toString().length.should.be.at.least(1, 'timestamp is present')
                 })
             });
     });
-    
+
 });

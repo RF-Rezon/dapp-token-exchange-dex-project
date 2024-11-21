@@ -1,4 +1,4 @@
-const { tokenFunc, EVM_REVERT, INVALID_ADDRESS } = require('./helpers');
+const { tokenFunc, EVM_REVERT, ETHER_ADDRESS } = require('./helpers');
 
 const Token = artifacts.require('./Token');
 
@@ -86,7 +86,7 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
             });
 
             it('tracks valid receipent', async () => {
-                await token.transfer(INVALID_ADDRESS, amount, { from: deployer }).should.be.rejectedWith(EVM_REVERT);
+                await token.transfer(ETHER_ADDRESS, amount, { from: deployer }).should.be.rejectedWith(EVM_REVERT);
             });
     })
 
@@ -118,7 +118,7 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
         })
         describe('failure', () => {
             it('rejects invalid spenders', async () => {
-                await token.approve(INVALID_ADDRESS, amount, { from: deployer }).should.be.rejected;
+                await token.approve(ETHER_ADDRESS, amount, { from: deployer }).should.be.rejected;
             })
         })
 
@@ -170,7 +170,7 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
             })
 
             it('tracks valid receipent', async () => {
-                await token.transferFrom(deployer, INVALID_ADDRESS, amount, { from: spender}).should.be.rejected;
+                await token.transferFrom(deployer, ETHER_ADDRESS, amount, { from: spender}).should.be.rejected;
             })
         })
 
