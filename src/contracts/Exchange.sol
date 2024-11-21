@@ -70,17 +70,17 @@ contract Exchange {
         feePercent = _feeParcent;
     }
 
-    // fallback() external {
-    //     revert();
-    // }
+    // Fallback
     receive() external payable {
         revert();
     }
+
     // [] Deposit ether
     function depositEther() public payable {
         tokens[ETHER][msg.sender] += msg.value;
         emit Deposit(ETHER, msg.sender, msg.value, tokens[ETHER][msg.sender]);
     }
+
     // [] Withdraw ether
     function withdrawEther(uint256 _amount) public {
         require(tokens[ETHER][msg.sender] >= _amount);
@@ -88,6 +88,7 @@ contract Exchange {
         payable(msg.sender).transfer(_amount);
         emit Withdraw(ETHER, msg.sender, _amount, tokens[ETHER][msg.sender]);
     }
+
     // [] Deposit tokens
     function depositToken(address _token, uint _amount) public {
         require(_token != ETHER);
@@ -103,6 +104,7 @@ contract Exchange {
         tokens[_token][msg.sender] -= _amount;
         emit Withdraw(_token, msg.sender, _amount, tokens[_token][msg.sender]);
     }
+
     // [] Check balances
     function balanceOf(
         address _token,
@@ -110,6 +112,7 @@ contract Exchange {
     ) public view returns (uint256) {
         return tokens[_token][_user];
     }
+
     // [] Make order
     function makeOrder(
         address _tokenGet, // Token user want to purchase
@@ -137,6 +140,7 @@ contract Exchange {
             block.timestamp
         );
     }
+
     // [] Cancel order
     function cancelOrder(uint256 _id) public {
         _Order storage _order = orders[_id];
@@ -154,6 +158,7 @@ contract Exchange {
             _order.timestamp
         );
     }
+
     // [] Fill order
     function fillOrder(uint256 _id) public {
         require(_id > 0 && _id <= totalOrder);
@@ -171,6 +176,7 @@ contract Exchange {
         );
         orderFilled[_order.id] = true;
     }
+
     function _trade(
         uint256 _orderId,
         address _user,

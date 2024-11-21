@@ -18,7 +18,7 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
 
     beforeEach(async () => {   // "beforeEach" should always under "describe". But its also allowed. 
         token = await Token.new()
-    })
+    });
  
     describe('deployment', () => {
         it('tracks the name', async () => {
@@ -44,10 +44,10 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
     });
 
     describe('sending tokens', () => {                      
-        let amount
-        let result
+    let amount
+    let result
 
-        describe('success', async () => {
+    describe('success', async () => {
             beforeEach(async () => {
                 amount = tokenFunc(100);
                 // 🚩 Transfer
@@ -73,10 +73,9 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
                 event._to.toString().should.eq(receiver, 'receiver is correct')
                 event._value.toString().should.eq(amount.toString(), 'value is correct')  // eq is the short form of equal.
             })
-        })
+    })
 
-
-        describe('failure', async () => {
+    describe('failure', async () => {
             it('rejects insufficient balances', async () => {
 
                 let invalidAmount = tokenFunc(1000000000); // Greater than total supply
@@ -89,7 +88,7 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
             it('tracks valid receipent', async () => {
                 await token.transfer(INVALID_ADDRESS, amount, { from: deployer }).should.be.rejectedWith(EVM_REVERT);
             });
-        })
+    })
 
     });
 
@@ -124,7 +123,6 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
         })
 
     });
-
 
     describe('delegeted token transfers', () => {    
         let amount
@@ -178,5 +176,5 @@ contract('Token', ([deployer, receiver, spender]) => {   // ⚡ From Accounts ar
 
     });
 
-})
+});
 
