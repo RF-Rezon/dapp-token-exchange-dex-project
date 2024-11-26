@@ -16,7 +16,7 @@ function App() {
         let networkId = await web3.eth.net.getId();
         console.log("Network ID:", networkId);
 
-        // Map the network ID to a network name
+        // Map the network ID to a network name (Randomly taken for now)
         const networkMapping = {
           1: "mainnet",
           3: "ropsten",
