@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Token from "./abis/Token.json";
-import { loadWeb3 } from "./store/interactions";
+import { loadAccount, loadExchange, loadId, loadToken, loadWeb3 } from "./store/interactions";
 
 function App() {
   const [totalSupply, setTotalSupply] = useState(null); // State for total supply
-  const [networkType, setNetworkType] = useState(""); // State for network type
   const [account, setAccount] = useState(""); // State for user's account
   const dispatch = useDispatch();
 
@@ -19,37 +17,31 @@ function App() {
         const web3Instance = await loadWeb3(dispatch);
 
         // Get accounts
-        const accounts = await web3Instance.eth.getAccounts();
-        setAccount(accounts[0]); // Set the first account
-        console.log("Connected Account:", accounts[0]);
+        const account = await loadAccount(web3Instance, dispatch)
+        setAccount(account); // Set the first account
 
         // Get the network ID
-        const networkId = await web3Instance.eth.net.getId();
+        const networkId = await loadId(web3Instance, dispatch)
         console.log("Network ID:", networkId);
 
-        // Map the network ID to a network name
-        const networkMapping = {
-          1: "mainnet",
-          3: "ropsten",
-          4: "rinkeby",
-          5: "goerli",
-          42: "kovan",
-          5777: "ganache", // Added for Ganache
-        };
-        const networkName = networkMapping[networkId] || "unknown/private";
-        setNetworkType(networkName);
-        console.log("Network Type:", networkName);
+        // // Map the network ID to a network name
+        // const networkMapping = {
+        //   1: "mainnet",
+        //   3: "ropsten",
+        //   4: "rinkeby",
+        //   5: "goerli",
+        //   42: "kovan",
+        //   5777: "ganache", // Added for Ganache
+        // };
+        // const networkName = networkMapping[networkId] || "unknown/private";
+        // setNetworkType(networkName);
+        // console.log("Network Type:", networkName);
 
         // Access the token contract
-        const tokenABI = Token.abi;
-        const tokenAddress = Token.networks[networkId]?.address;
-        if (!tokenAddress) {
-          alert("Token contract not deployed to this network.");
-          return;
-        }
-        console.log("Token Contract Address:", tokenAddress);
+       
 
-        const tokenContract = new web3Instance.eth.Contract(tokenABI, tokenAddress);
+        const tokenContract = await loadToken(web3Instance, networkId, dispatch);
+        await loadExchange(web3Instance, networkId, dispatch);
 
         // Fetch total supply from the token contract
         const supply = await tokenContract.methods.totalSupply().call();
@@ -67,7 +59,6 @@ function App() {
     <div>
       <h1>Blockchain Data</h1>
       <p><strong>Account:</strong> {account || "Not connected"}</p>
-      <p><strong>Network Type:</strong> {networkType || "Loading..."}</p>
       <p><strong>Total Supply:</strong> {totalSupply || "Loading..."}</p>
     </div>
   );
