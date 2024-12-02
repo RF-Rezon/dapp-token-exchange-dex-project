@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loadAccount, loadExchange, loadId, loadToken, loadWeb3 } from "./store/interactions";
-
+import { accountSelector } from './store/selectors';
 function App() {
   const [totalSupply, setTotalSupply] = useState(null); // State for total supply
   const [account, setAccount] = useState(""); // State for user's account
+  const accountFromStore = useSelector(accountSelector);
   const dispatch = useDispatch();
 
   // Access Web3 from Redux state
@@ -59,6 +60,7 @@ function App() {
     <div>
       <h1>Blockchain Data</h1>
       <p><strong>Account:</strong> {account || "Not connected"}</p>
+      <p><strong>Account:</strong> {accountFromStore || "Not connected"}</p>
       <p><strong>Total Supply:</strong> {totalSupply || "Loading..."}</p>
     </div>
   );
